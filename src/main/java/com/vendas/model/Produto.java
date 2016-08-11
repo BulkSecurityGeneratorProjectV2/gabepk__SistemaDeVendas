@@ -14,9 +14,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+
+import com.vendas.validation.SKU;
 
 @Entity
 @Table(name="produto")
@@ -52,7 +55,9 @@ public class Produto implements Serializable {
 		this.nome = nome;
 	}
 
-	@NotBlank
+	// Regex não é muito bom, pois se mudasse aqui, teria que mudar no sistema todo.
+	// @Pattern(regexp = "([a-zA-Z]{2}\\d{4,18})?") // Dígito é "\d", mas vc deve botar o escape "\" antes
+	@NotBlank @SKU
 	@Column(nullable = false, length = 20, unique = true)
 	public String getSku() {
 		return sku;
@@ -72,7 +77,7 @@ public class Produto implements Serializable {
 		this.valorUnitario = valorUnitario;
 	}
 
-	@NotNull @Min(0) @Max(9999)
+	@NotNull(message = "é obrigatório") @Min(0) @Max(value = 9999, message = "deve ser menor que 9999") 
 	@Column(name="quantidade_estoque", nullable = false, length = 5)
 	public Integer getQuantidadeEstoque() {
 		return quantidadeEstoque;
